@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  # 🔹 PostgreSQL
+  postgres_db:
+    image: postgres:14
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_DB: telegram_bot_db
+      POSTGRES_USER: bot_user
+      POSTGRES_PASSWORD: bot_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 🔹 Telegram Bot Service
+  telegram-bot:
+    build: ./telegram-bot-service
+    container_name: telegram_bot
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - github-service
+      - trello-service
+    volumes:
+      - ./logs/bot.log:/app/logs/bot.log
+
+  # 🔹 GitHub API Service
+  github-service:
+    build: ./github-service
+    container_name: github_service
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./logs/bot.log:/app/logs/bot.log
+
+  # 🔹 Trello API Service
+  trello-service:
+    build: ./trello-service
+    container_name: trello_service
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8003:8000"
+    volumes:
+      - ./logs/bot.log:/app/logs/bot.log
+
+volumes:
+  postgres_data:
+
+

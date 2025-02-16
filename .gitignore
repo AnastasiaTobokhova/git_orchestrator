@@ -1,0 +1,55 @@
+# 🚀 Общие файлы и папки, которые не должны попадать в репозиторий
+
+# 1️⃣ VS Code
+.vscode/
+*.code-workspace
+
+# 2️⃣ Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# 3️⃣ Файлы виртуального окружения
+venv/
+.env
+*.env
+
+# 4️⃣ Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+.Dockerfile.swp
+*.dockerfile
+**/Dockerfile
+
+# 5️⃣ Логи и временные файлы
+*.log
+*.out
+*.pid
+*.swp
+*.swo
+*.bak
+
+# 6️⃣ Файлы IDE и редакторов
+.idea/
+*.iml
+*.sublime-workspace
+*.sublime-project
+
+# 7️⃣ GitHub Actions (кэширование)
+.github/workflows/*.log
+.github/workflows/*.bak
+
+# 8️⃣ PostgreSQL (если используются дампы и кеши)
+*.sql
+*.db
+pg_data/
+
+# 9️⃣ Trello API-токены (если они в текстовых файлах)
+trello_token.txt
+trello_api_key.txt
+
+# 🔟 Разное
+logs/
+*.log

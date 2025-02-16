@@ -1,0 +1,36 @@
+name: CI/CD Pipeline
+
+on:
+  repository_dispatch:
+    types: [deploy]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout репозитория
+        uses: actions/checkout@v4
+
+      - name: 🐳 Установка Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
+
+      - name: 🔨 Билдим Docker-образ
+        run: |
+          docker build -t ${{ secrets.REGISTRY_ID }}/${{ github.event.client_payload.image_name }}:latest .
+
+      - name: 🚀 Пушим Docker-образ в Yandex Cloud
+        run: |
+          echo ${{ secrets.YC_OAUTH_TOKEN }} | docker login --username oauth --password-stdin cr.yandex
+          docker push ${{ secrets.REGISTRY_ID }}/${{ github.event.client_payload.image_name }}:latest
+
+      - name: 🌐 Деплой на сервер
+        run: |
+          ssh -o StrictHostKeyChecking=no yc-user@${{ secrets.VM_IP }} "
+          docker stop ${{ github.event.client_payload.image_name }} || true
+          docker rm ${{ github.event.client_payload.image_name }} || true
+          docker pull ${{ secrets.REGISTRY_ID }}/${{ github.event.client_payload.image_name }}:latest
+          docker run -d --name ${{ github.event.client_payload.image_name }} -p 80:80 ${{ secrets.REGISTRY_ID }}/${{ github.event.client_payload.image_name }}:latest
+          "

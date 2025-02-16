@@ -1,0 +1,6 @@
+aiogram==3.0.0
+asyncpg
+SQLAlchemy
+pydantic
+requests
+python-dotenv
